@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile.dev
       context: ./server
     volumes:
-      - /app/node_moodules
+      - /app/node_modules
       - ./server:/app
     environment: 
       - REDIS_HOST=redis
