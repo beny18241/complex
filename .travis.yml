@@ -19,3 +19,16 @@ after_success:
   - docker push beny18241/complex-nginx
   - docker push beny18241/complex-server
   - docker push beny18241/complex-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "eu-central-1"
+  app:  "multi-docker"
+  env:  "MultiDocker-env"
+  bucket_name:  "elasticbeanstalk-eu-central-1-051723275924"
+  bucket_path:  "docker-multi"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
