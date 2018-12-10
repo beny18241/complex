@@ -8,9 +8,9 @@ spec:
     matchLabels:
       components: web
   template:
-    metada:
+    metadata:
       labels:
-        component:  web
+        components: web
     spec:
       containers:
         - name: client
