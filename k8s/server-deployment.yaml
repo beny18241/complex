@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: server
-          image:  beny18241/complec-server
+          image:  beny18241/complex-server
           ports:
             - containerPort:  5000
