@@ -9,7 +9,7 @@ spec:
       component:  worker
   template:
     metadata:
-      lables:
+      labels:
         component: worker
     spec:
       containers:
