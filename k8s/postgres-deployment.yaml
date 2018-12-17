@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        component:  postgres
+        component:  postgress
     spec:
       containers:
         - name: postgres
