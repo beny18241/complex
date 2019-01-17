@@ -1,34 +1,27 @@
 sudo: required
 services:
   - docker
-
+env:
+  global:
+    - SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:
-  - docker build -t beny18241/complex -f ./client/Dockerfile.dev ./client
+  - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - gcloud auth activate-service-account --key-file service-account.json
+  - gcloud config set project fleet-anagram-227311
+  - gcloud config set compute/zone europe-west3-a
+  - gcloud container clusters get-credentials complex-cluster
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t beny18241/k8s -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run beny18241/complex npm test -- --coverage
-
-after_success:
-  - docker build -t beny18241/complex-client ./client
-  - docker build -t beny18241/complex-nginx ./nginx
-  - docker build -t beny18241/complex-server ./server
-  - docker build -t beny18241/complex-worker ./worker
-
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  - docker push beny18241/complex-client
-  - docker push beny18241/complex-nginx
-  - docker push beny18241/complex-server
-  - docker push beny18241/complex-worker
+  - docker run beny18241/k8s npm test -- --coverage
 
 deploy:
-  provider: elasticbeanstalk
-  region: "eu-central-1"
-  app:  "multi-docker"
-  env:  "MultiDocker-env"
-  bucket_name:  "elasticbeanstalk-eu-central-1-051723275924"
-  bucket_path:  "docker-multi"
+  provider: script
+  script: bash ./deploy.sh
   on:
     branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key:
-    secure: "$AWS_SECRET_KEY"

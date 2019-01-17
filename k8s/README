@@ -1,0 +1,15 @@
+kubectl create secret generic pgpassword --from-literal PGPASSWORD=pgpassword
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/mandatory.yaml
+minikube addons enable ingress
+
+
+#HELM
+GCP
+
+kubectl create serviceaccount --namespace kube-system tiller
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+helm init --service-account tiller --upgrade
+helm install stable/nginx-ingress --name my-nginx --set rbac.create=true
+
+#test
